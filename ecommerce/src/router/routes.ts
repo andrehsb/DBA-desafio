@@ -6,22 +6,29 @@ const routes: RouteRecordRaw[] = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       // home 
-      { 
-        path: '', 
-        component: () => import('pages/IndexPage.vue'),
-        meta: { requiresAuth: true } 
+      {
+        path: '',
+        component: () => import('pages/HomePage.vue'),
+        meta: { requiresAuth: true }
       },
       // login
-      { 
-        path: 'login', 
+      {
+        path: 'login',
         name: 'login',
-        component: () => import('pages/LoginPage.vue') 
+        component: () => import('pages/LoginPage.vue')
       },
       //add produto
-      { 
-        path: 'cadastro', 
+      {
+        path: 'cadastro',
         component: () => import('pages/ProductForm.vue'),
         meta: { requiresAuth: true, role: 'admin' }
+      },
+      //detalhes do produto
+      {
+        path: '/produto/:id', 
+        name: 'detalhes',
+        component: () => import('pages/ProductDetailsPage.vue'),
+        meta: { requiresAuth: true }
       }
     ],
   },
