@@ -8,6 +8,9 @@ export const useAuthStore = defineStore('auth', {
     // recupera role do storage para nao sumir ao recarregar a página
     role: localStorage.getItem('role') || '' 
   }),
+  getters: {
+    isAuthenticated: (state) => !!state.token,
+  },
   actions: {
     async login(username: string, password: string) {
       const response = await api.post('/auth/login', { username, password });
