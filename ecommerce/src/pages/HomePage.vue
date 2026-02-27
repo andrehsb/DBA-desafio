@@ -2,8 +2,12 @@
 import { ref, onMounted } from 'vue';
 import { api } from 'boot/axios';
 import { Product } from 'components/models';
+import { useCarrinhoStore } from 'src/stores/carrinho';
+import { useQuasar } from 'quasar';
 
+const $q = useQuasar();
 const products = ref<Product[]>([]);
+const cart = useCarrinhoStore();
 const loading = ref(true);
 
 // busca os produtos
@@ -20,6 +24,45 @@ async function loadProducts() {
     loading.value = false;
   }
 }
+
+async function deleteProduct(id: number) {
+  $q.dialog({
+    title: 'Confirmar Exclusão',
+    message: 'Tem certeza que deseja excluir este produto?',
+    ok: {
+      label: 'Sim',
+      color: 'negative'
+    },
+    cancel: {
+      label: 'Não',
+      color: 'grey',
+      flat: true
+    },
+    persistent: true
+  }).onOk(async () => {
+    await api.delete(`/products/${id}`);
+    $q.notify({
+      type: 'positive',
+      message: 'Produto excluído com sucesso!',
+      position: 'center',
+      timeout: 3000
+    });
+  });
+}
+
+function addItem(prod: Product) {
+  if (prod) {
+    cart.addToCart(prod);
+
+    $q.notify({
+      message: `${prod.name} adicionado ao carrinho!`,
+      color: 'positive',
+      icon: 'check',
+      position: 'bottom-right'
+    });
+  }
+}
+
 const formatPrice = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -49,9 +92,10 @@ onMounted(() => {
             </div>
           </q-card-section>
 
-          <q-card-actions align="right">
-            <q-btn flat color="primary" label="Ver detalhes" />
-            <q-btn color="primary" icon="shopping_cart" label="Adicionar" />
+          <q-card-actions align="between">
+            <q-btn flat color="negative" label="Excluir" @click="deleteProduct(prod.id)" />
+            <q-btn flat color="primary" label="Ver detalhes" :to="`/produto/${prod.id}`" />
+            <q-btn color="primary" icon="shopping_cart" label="Adicionar" @click="addItem(prod)" />
           </q-card-actions>
         </q-card>
       </div>
@@ -61,4 +105,4 @@ onMounted(() => {
       <q-spinner-gears size="50px" color="primary" />
     </q-inner-loading>
   </q-page>
-</template>
+</template> 
