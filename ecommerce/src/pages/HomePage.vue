@@ -41,6 +41,7 @@ async function deleteProduct(id: number) {
     persistent: true
   }).onOk(async () => {
     await api.delete(`/products/${id}`);
+    products.value = products.value.filter(prod => prod.id !== id); // atualiza a lista localmente para evitar nova chamada da api
     $q.notify({
       type: 'positive',
       message: 'Produto excluído com sucesso!',
