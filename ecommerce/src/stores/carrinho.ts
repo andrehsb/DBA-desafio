@@ -1,16 +1,17 @@
 import { defineStore } from 'pinia';
-
+import { Notify } from 'quasar';
 interface CarrinhoItem {
     id: number;
     name: string;
     price: number;
     image: string;
+    stock: number;
     quantidade: number;
 }
 
 export const useCarrinhoStore = defineStore('carrinho', {
     state: () => ({
-        items: JSON.parse(localStorage.getItem('carrinho') || '[]') as CarrinhoItem[],  
+        items: JSON.parse(localStorage.getItem('carrinho') || '[]') as CarrinhoItem[],
     }),
     getters: {
         totalItems: (state) => state.items.reduce((acc, item) => acc + item.quantidade, 0),
@@ -18,12 +19,23 @@ export const useCarrinhoStore = defineStore('carrinho', {
     },
     actions: {
         addToCart(product: any) {
-            console.log('Adicionando ao carrinho:', product.name);
             const existingItem = this.items.find(item => item.id === product.id);
-            if (existingItem) {
-                existingItem.quantidade++;
+            const qntAtual = existingItem ? existingItem.quantidade : 0;
+            const estoque = product.stock;
+            if (qntAtual < estoque) {
+                if (existingItem) {
+                    existingItem.quantidade++;
+                } else {
+                    this.items.push({ ...product, quantidade: 1, stock: estoque });
+                }
             } else {
-                this.items.push({ ...product, quantidade: 1 });
+                Notify.create({
+                    type: 'warning',
+                    message: estoque <= 0 
+                ? 'Produto esgotado!' 
+                : `Limite de ${estoque} unidades atingido.`,
+                    position: 'top'
+                });
             }
             localStorage.setItem('carrinho', JSON.stringify(this.items));
         },
@@ -39,7 +51,7 @@ export const useCarrinhoStore = defineStore('carrinho', {
                 }
             }
 
-           localStorage.setItem('carrinho', JSON.stringify(this.items));
+            localStorage.setItem('carrinho', JSON.stringify(this.items));
         },
         clearCart() {
             this.items = [];
