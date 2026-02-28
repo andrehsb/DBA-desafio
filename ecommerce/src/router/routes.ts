@@ -27,8 +27,14 @@ const routes: RouteRecordRaw[] = [
       {
         path: '/produto/:id', 
         name: 'detalhes',
-        component: () => import('pages/ProductDetailsPage.vue'),
+        component: () => import('pages/ProductDetails.vue'),
         meta: { requiresAuth: true }
+      },
+      //editar produto
+      {
+        path: 'editar/:id',
+        component: () => import('pages/EditProduct.vue'),
+        meta: { requiresAuth: true, role: 'admin' }
       }
     ],
   },

@@ -4,9 +4,23 @@ import { useRoute } from 'vue-router';
 import { api } from 'boot/axios';
 import { useCarrinhoStore } from 'src/stores/carrinho';
 import { useQuasar } from 'quasar';
+import { useAuthStore } from 'src/stores/auth';
 
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    description: string;
+    image: string;
+    stock: number;
+    category: string;
+}
+const auth = useAuthStore();
 const cart = useCarrinhoStore();
 const $q = useQuasar();
+const route = useRoute();
+const product = ref<Product | null>(null);
+const loading = ref(true);
 
 function addItem() {
     if (product.value) {
@@ -19,20 +33,6 @@ function addItem() {
         });
     }
 }
-
-interface Product {
-    id: number;
-    name: string;
-    price: number;
-    description: string;
-    image: string;
-    stock: number;
-    category: string;
-}
-
-const route = useRoute();
-const product = ref<Product | null>(null);
-const loading = ref(true);
 
 const loadProduct = async () => {
     try {
@@ -54,7 +54,6 @@ const formatPrice = (val: number) => {
         currency: 'BRL'
     }).format(val);
 };
-
 </script>
 
 <template>
@@ -67,6 +66,16 @@ const formatPrice = (val: number) => {
 
         <q-card v-else-if="product" class="my-card">
             <div class="row q-col-gutter-md">
+
+                <q-card-actions v-if="auth.role === 'admin'" align="right" class="col-12">
+                    <q-btn 
+                        color="secondary" 
+                        icon="edit" 
+                        label="Editar Dados" 
+                        :to="`/editar/${product.id}`" 
+                    />
+                </q-card-actions>
+
                 <div class="col-12 col-md-6">
                     <q-img :src="product.image" style="max-height: 400px" fit="contain" />
                 </div>

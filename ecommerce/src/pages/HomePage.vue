@@ -4,7 +4,8 @@ import { api } from 'boot/axios';
 import { Product } from 'components/models';
 import { useCarrinhoStore } from 'src/stores/carrinho';
 import { useQuasar } from 'quasar';
-
+import { useAuthStore } from 'src/stores/auth';
+const auth = useAuthStore();
 const $q = useQuasar();
 const products = ref<Product[]>([]);
 const cart = useCarrinhoStore();
@@ -88,13 +89,13 @@ onMounted(() => {
 
           <q-card-section>
             {{ prod.description }}
-            <div class="text-primary text-bold q-mt-md">
+            <div class="text-secondary text-bold q-mt-md">
               {{ formatPrice(prod.price) }}
             </div>
           </q-card-section>
 
           <q-card-actions align="between">
-            <q-btn flat color="negative" label="Excluir" @click="deleteProduct(prod.id)" />
+            <q-btn v-if="auth.role === 'admin'" flat color="negative" label="Excluir" @click="deleteProduct(prod.id)" />
             <q-btn flat color="primary" label="Ver detalhes" :to="`/produto/${prod.id}`" />
             <q-btn color="primary" icon="shopping_cart" label="Adicionar" @click="addItem(prod)" />
           </q-card-actions>
