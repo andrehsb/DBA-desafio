@@ -73,18 +73,37 @@ function finalizaCompra() {
           <q-badge align="middle" color="orange" v-if="auth.role === 'admin'">Admin</q-badge>
         </q-toolbar-title>
 
-        <q-item v-if="auth.role === 'admin'" clickable to="/cadastro">
-          <q-item-section avatar>
+        <q-item v-if="auth.role === 'admin'" clickable to="/cadastro" active-class="borda-ativa">
+          <q-item-section side>
             <q-icon name="add_circle" />
           </q-item-section>
           <q-item-section>
             <q-item-label>Cadastrar Produto</q-item-label>
           </q-item-section>
         </q-item>
-        <q-section v-if="auth.isAuthenticated" side>
-          <q-btn flat icon="shopping_cart" label="Carrinho" @click="openCart" />
-          <q-btn flat icon="logout" label="Sair" @click="handleLogout" />
-        </q-section>
+
+        <q-separator dark q-my-md v-if="auth.isAuthenticated" />
+
+        <template v-if="auth.isAuthenticated">
+
+          <q-item clickable @click="openCart" :active="carrinho" active-class="borda-ativa">
+            <q-item-section side>
+              <q-icon name="shopping_cart" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Carrinho</q-item-label>
+            </q-item-section>
+          </q-item>
+
+          <q-item clickable @click="handleLogout" class="text-negative">
+            <q-item-section side>
+              <q-icon name="logout" color="negative" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>Sair</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
       </q-toolbar>
     </q-header>
 
@@ -106,18 +125,25 @@ function finalizaCompra() {
           </q-item-section>
 
           <q-item-section>
-            <q-item-label class="text-weight-bold">{{ prod.name }}</q-item-label>
+            <q-item-label class="text-weight-bold text-black">{{ prod.name }}</q-item-label>
             <q-item-label caption>
-              Qtd: {{ prod.quantidade }} x {{ formatPrice(prod.price) }}
+              Quantidade: {{ prod.quantidade }} x {{ formatPrice(prod.price) }}
             </q-item-label>
           </q-item-section>
-          <q-btn flat round dense icon="remove" size="sm" @click="prod.id && cart.removeFromCart(prod.id)" />
+
           <q-item-section side>
-            <div class="text-primary text-weight-bold">
-              {{ formatPrice(prod.price * prod.quantidade) }}
+            <div class="row items-center q-gutter-x-xs">
+              <q-btn flat round dense icon="remove" size="sm" color="black" @click="prod.id && cart.removeFromCart(prod.id)" />
+
+              <div class="text-primary text-weight-bold q-px-xs">
+                {{ formatPrice(prod.price * prod.quantidade) }}
+              </div>
+
+              <q-btn flat round dense icon="add" size="sm" color="black" @click="prod.id && cart.addToCart(prod)" />
+
             </div>
           </q-item-section>
-          <q-btn flat round dense icon="add" size="sm" @click="prod.id && cart.addToCart(prod)" />
+
         </q-item>
 
         <q-item class="q-py-md" v-if="cart.items.length > 0">

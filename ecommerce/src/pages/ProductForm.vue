@@ -34,24 +34,37 @@ async function handleSubmit() {
 </script>
 
 <template>
-    <q-page padding>
-        <div class="text-h4 q-mb-md">Cadastrar Novo Produto</div>
+    <q-page padding class="flex flex-center">
 
-        <q-card style="max-width: 600px">
-            <q-card-section>
-                <q-form @submit="handleSubmit" class="q-gutter-md">
-                    <q-input v-model="form.name" label="Nome do Produto" outlined />
-                    <q-input v-model.number="form.price" label="Preço" type="number" outlined step="0.01" prefix="R$" class="col" />
-                    <q-input v-model="form.description" label="Descrição" type="textarea" outlined />
-                    <q-input v-model="form.category" label="Categoria" outlined />
-                    <q-input v-model="form.image" label="URL da Imagem" outlined />
-                    <q-input v-model.number="form.stock" label="Quantidade em Estoque" type="number" outlined />
-                    <div class="row justify-end">
-                        <q-btn label="Cancelar" flat color="grey" to="/" />
-                        <q-btn label="Salvar Produto" color="primary" type="submit" :loading="loading" />
+        <div class="full-width" style="max-width: 600px">
+            <q-btn flat icon="arrow_back" label="Voltar" to="/" class="q-mb-md" />
+            <q-card flat bordered class="shadow-2">
+                <q-card-section>
+                    <div class="text-h5 q-mb-lg text-primary text-weight-bold">
+                        Cadastrar Novo Produto
                     </div>
-                </q-form>
-            </q-card-section>
-        </q-card>
+
+                    <q-form @submit="handleSubmit" class="q-gutter-md">
+                        <q-input v-model="form.name" label="Nome do Produto" outlined />
+
+                        <div class="row q-col-gutter-sm">
+                            <q-input v-model.number="form.price" label="Preço" type="number" outlined step="0.01"
+                                prefix="R$" class="col-12 col-sm-6" />
+                            <q-input v-model.number="form.stock" label="Estoque" type="number" outlined
+                                class="col-12 col-sm-6" />
+                        </div>
+
+                        <q-input v-model="form.description" label="Descrição" type="textarea" outlined />
+                        <q-input v-model="form.category" label="Categoria" outlined />
+                        <q-input v-model="form.image" label="URL da Imagem" outlined />
+
+                        <div class="row justify-end q-mt-lg">
+                            <q-btn label="Cancelar" flat color="grey" to="/" class="q-mr-sm" />
+                            <q-btn label="Salvar Produto" color="primary" type="submit" :loading="loading" />
+                        </div>
+                    </q-form>
+                </q-card-section>
+            </q-card>
+        </div>
     </q-page>
 </template>
