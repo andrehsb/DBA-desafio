@@ -14,11 +14,13 @@ const cart = useCarrinhoStore();
 const loading = ref(true);
 const filtroNome = ref('');
 const filtroCategoria = ref('Todos');
-
-const categorias = computed(() => {
-  const lista = products.value.map(p => p.category);
-  return [...new Set(lista)];
-});
+const imagensPorCategoria: Record<string, string> = {
+  'Eletrônicos': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=500',
+  'Roupas': 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=500',
+  'Alimentos': 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500',
+  'Jogos': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500',
+  'default': 'https://images.unsplash.com/photo-1557683316-973673baf926?w=500'
+};
 
 // busca os produtos
 async function loadProducts() {
@@ -61,23 +63,6 @@ async function deleteProduct(id: number) {
   });
 }
 
-const produtosFiltrados = computed(() => {
-  let lista = products.value;
-
-  //por Nome (da SearchBar)
-  if (filtroNome.value) {
-    const needle = filtroNome.value.toLowerCase();
-    lista = lista.filter(p => p.name.toLowerCase().includes(needle));
-  }
-
-  //por Categoria (dos botões)
-  if (filtroCategoria.value !== 'Todos') {
-    lista = lista.filter(p => p.category === filtroCategoria.value);
-  }
-
-  return lista;
-});
-
 function addItem(prod: Product) {
   if (prod) {
     cart.addToCart(prod);
@@ -102,6 +87,28 @@ onMounted(() => {
   loadProducts();
 
 });
+
+const produtosFiltrados = computed(() => {
+  let lista = products.value;
+
+  //por Nome (da SearchBar)
+  if (filtroNome.value) {
+    const needle = filtroNome.value.toLowerCase();
+    lista = lista.filter(p => p.name.toLowerCase().includes(needle));
+  }
+
+  //por Categoria (dos botões)
+  if (filtroCategoria.value !== 'Todos') {
+    lista = lista.filter(p => p.category === filtroCategoria.value);
+  }
+
+  return lista;
+});
+
+const categorias = computed(() => {
+  const lista = products.value.map(p => p.category);
+  return [...new Set(lista)];
+});
 </script>
 
 <template>
@@ -112,42 +119,36 @@ onMounted(() => {
       </div>
     </div>
     <div class="row justify-center q-mb-xl q-gutter-sm">
-      <div class="text-subtitle1 text-grey-8 q-mb-sm text-weight-medium">
+      <div class="text-subtitle1 text-primary q-mb-sm text-weight-medium">
         Selecione uma categoria:
       </div>
       <q-chip v-for="categ in categorias" :key="categ" clickable @click="filtroCategoria = categ"
-        :removable="filtroCategoria === categ" 
-        @remove="filtroCategoria = 'Todos'"
+        :removable="filtroCategoria === categ" @remove="filtroCategoria = 'Todos'"
         :color="filtroCategoria === categ ? 'primary' : 'grey-4'"
         :text-color="filtroCategoria === categ ? 'white' : 'grey-9'">
         {{ categ }}
       </q-chip>
     </div>
     <div class="row q-col-gutter-md">
-      <div v-for="prod in produtosFiltrados" :key="prod.id" class="col-12 col-sm-6 col-md-4">
-        <q-card>
-          <q-card-section>
-            <div class="text-h6">{{ prod.name }}</div>
-            <div class="text-subtitle2">{{ prod.category }}</div>
-          </q-card-section>
-
-          <q-card-section>
-            <div class="text-secondary text-bold q-mt-md">
-              {{ formatPrice(prod.price) }}
+      <div v-for="prod in produtosFiltrados" :key="prod.id" class="col-md-4 col-lg-3">
+        <q-card clickable @click="() => $router.push(`/produto/${prod.id}`)" class="cursor-pointer">
+          <q-img :src="imagensPorCategoria[prod.category] || imagensPorCategoria.default" style="height: 120px"></q-img>
+          <q-card-section class="text-center q-pa-xs">
+            <div class="text-h6 text-bold text-grey-10 ellipsis-4-lines flex flex-center"
+              style="height: 64px; line-height: 1.2">
+              {{ prod.name }}
             </div>
           </q-card-section>
-
-          <q-card-actions align="between">
-            <q-btn v-if="auth.role === 'admin'" flat color="negative" label="Excluir" @click="deleteProduct(prod.id)" />
-            <q-btn flat color="primary" label="Ver detalhes" :to="`/produto/${prod.id}`" />
-            <q-btn color="primary" icon="shopping_cart" label="Adicionar" @click="addItem(prod)" />
+          <q-card-actions class="q-px-md q-gutter-xs q-pt-none" align="between">
+            <q-btn v-if="auth.role === 'admin'" flat color="negative" label="Excluir" @click="deleteProduct(prod.id)"
+              class="q-px-sm" />
+            <div class="text-secondary text-bold">
+              {{ formatPrice(prod.price) }}
+            </div>
+            <q-btn color="primary" icon="shopping_cart" label="Adicionar" @click="addItem(prod)" class="q-px-sm" />
           </q-card-actions>
         </q-card>
       </div>
     </div>
-
-    <q-inner-loading :showing="loading">
-      <q-spinner-gears size="50px" color="primary" />
-    </q-inner-loading>
   </q-page>
 </template>

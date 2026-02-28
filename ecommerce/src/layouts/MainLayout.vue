@@ -4,7 +4,6 @@ import { useAuthStore } from 'src/stores/auth';
 import { useRouter } from 'vue-router';
 import { useCarrinhoStore } from 'src/stores/carrinho';
 import { useQuasar } from 'quasar';
-import { api } from 'boot/axios';
 
 const cart = useCarrinhoStore();
 const auth = useAuthStore();
@@ -18,6 +17,10 @@ const formatPrice = (value: number) => {
     style: 'currency',
     currency: 'BRL'
   }).format(value);
+};
+
+const toggleDarkMode = () => {
+  $q.dark.toggle();
 };
 
 function handleLogout() {
@@ -66,12 +69,16 @@ function finalizaCompra() {
 
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated class="bg-primary text-white">
-      <q-toolbar>
-        <q-toolbar-title>
+    <q-header elevated class="text-white">
+      <q-toolbar style="margin-top: 16px">
+        <q-toolbar-title sty>
           DBA Ecommerce
           <q-badge align="middle" color="orange" v-if="auth.role === 'admin'">Admin</q-badge>
         </q-toolbar-title>
+
+        <q-btn flat round @click="toggleDarkMode" :icon="$q.dark.isActive ? 'light_mode' : 'dark_mode'">
+          <q-tooltip>{{ $q.dark.isActive ? 'Modo Claro' : 'Modo Escuro' }}</q-tooltip>
+        </q-btn>
 
         <q-item v-if="auth.role === 'admin'" clickable to="/cadastro" active-class="borda-ativa">
           <q-item-section side>
@@ -133,7 +140,8 @@ function finalizaCompra() {
 
           <q-item-section side>
             <div class="row items-center q-gutter-x-xs">
-              <q-btn flat round dense icon="remove" size="sm" color="black" @click="prod.id && cart.removeFromCart(prod.id)" />
+              <q-btn flat round dense icon="remove" size="sm" color="black"
+                @click="prod.id && cart.removeFromCart(prod.id)" />
 
               <div class="text-primary text-weight-bold q-px-xs">
                 {{ formatPrice(prod.price * prod.quantidade) }}

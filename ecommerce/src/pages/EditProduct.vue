@@ -97,8 +97,6 @@ onMounted(loadProduct);
 
                         <q-input v-model="form.description" label="Descrição" type="textarea" outlined />
                         <q-input v-model="form.category" label="Categoria" outlined />
-                        <q-input v-model="form.image" label="URL da Imagem" outlined />
-
                         <div v-if="form.image" class="text-center q-mt-md">
                             <q-img :src="form.image" style="max-height: 100px; max-width: 100px" />
                         </div>

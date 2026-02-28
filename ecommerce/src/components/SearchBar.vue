@@ -61,11 +61,12 @@ const limparPesquisa = () => {
 <template>
     <q-select v-model="searchTerm" use-input hide-selected fill-input input-debounce="0" hide-dropdown-icon
         label="Procurar produto por nome..." label-color="white" :options="autocomplete" option-label="name"
+
         @filter="filter" @update:model-value="onSelect" @input-value="(val) => textoDigitado = val"
         @keyup.enter="buscaGeral" outlined rounded dense bg-color="grey-6" >
 
         <template v-slot:append>
-            <q-icon v-if="textoDigitado !== ''" name="close" @click="limparPesquisa" class="cursor-pointer q-mr-sm" />
+            <q-icon v-if="textoDigitado !== ''" name="close" @click="limparPesquisa" class="cursor-pointer q-mr-sm " />
             <q-icon name="search" @click="buscaGeral" />
         </template>
 

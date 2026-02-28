@@ -73,8 +73,6 @@ async function handleSubmit() {
 
                         <q-input v-model="form.description" label="Descrição" type="textarea" outlined />
                         <q-input v-model="form.category" label="Categoria" outlined />
-                        <q-input v-model="form.image" label="URL da Imagem" outlined />
-
                         <div class="row justify-end q-mt-lg">
                             <q-btn label="Cancelar" flat color="grey" to="/" class="q-mr-sm" />
                             <q-btn label="Salvar Produto" color="primary" type="submit" :loading="loading" />

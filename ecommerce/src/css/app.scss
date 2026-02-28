@@ -1,31 +1,79 @@
 .q-item {
-  color: white !important;
-  transition: all 0.3s ease;
+    color: white !important;
+    transition: all 0.3s ease;
+}
+
+.q-page {
+    background: $background !important;
+}
+
+.q-header {
+    background: #0c0229 !important;
+    padding: 0 16px !important;
+    height: 80px !important;
+    position: absolute;
 }
 
 .borda-ativa {
-  background: rgba(255, 255, 255, 0.1) !important;
-  color: white !important; 
-  font-weight: bold !important; 
-  border-left: 4px solid white; 
-  border-radius: 0 !important;
+    background: #FFF1 !important;
+    color: white !important;
+    font-weight: bold !important;
+    border-left: 4px solid #C6E700;
+    border-radius: 0 !important;
 }
 
 .q-item .q-icon {
-  color: white !important;
+    color: white !important;
 }
 
 .q-item.text-negative {
-  color: $negative !important; 
-  
-  .q-icon {
     color: $negative !important;
-  }
+
+    .q-icon {
+        color: $negative !important;
+    }
 }
+
 .q-item.text-negative:hover {
-  background: rgba($negative, 0.1) !important; 
+    background: rgba($negative, 0.1) !important;
 }
 
 .q-item .q-btn .q-icon {
-  color: inherit !important;
+    color: inherit !important;
+}
+
+body {
+    font-family: 'Barlow', sans-serif !important;
+}
+
+.q-field__native {
+    color: black !important;
+}
+
+.q-field__label {
+    color: black !important;
+}
+
+.q-card {
+    border: 1px solid transparent;
+    transition: background-color 0.3s ease;
+}
+
+.body--dark {
+    .q-page {
+        background: #121212 !important;
+    }
+
+    .q-header {
+        background: #0c0229 !important;
+    }
+
+    .q-card {
+        background: #d4d4db !important;
+        border: 1px solid #333;
+    }
+
+    .q-field--outlined .q-field__control:before {
+        border-color: rgb(138, 134, 134) !important;
+    }
 }
