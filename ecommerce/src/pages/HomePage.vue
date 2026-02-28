@@ -1,15 +1,24 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { api } from 'boot/axios';
 import { Product } from 'components/models';
 import { useCarrinhoStore } from 'src/stores/carrinho';
 import { useQuasar } from 'quasar';
 import { useAuthStore } from 'src/stores/auth';
+import SearchBar from 'components/SearchBar.vue';
+
 const auth = useAuthStore();
 const $q = useQuasar();
 const products = ref<Product[]>([]);
 const cart = useCarrinhoStore();
 const loading = ref(true);
+const filtroNome = ref('');
+const filtroCategoria = ref('Todos');
+
+const categorias = computed(() => {
+  const lista = products.value.map(p => p.category);
+  return [...new Set(lista)];
+});
 
 // busca os produtos
 async function loadProducts() {
@@ -52,6 +61,23 @@ async function deleteProduct(id: number) {
   });
 }
 
+const produtosFiltrados = computed(() => {
+  let lista = products.value;
+
+  //por Nome (da SearchBar)
+  if (filtroNome.value) {
+    const needle = filtroNome.value.toLowerCase();
+    lista = lista.filter(p => p.name.toLowerCase().includes(needle));
+  }
+
+  //por Categoria (dos botões)
+  if (filtroCategoria.value !== 'Todos') {
+    lista = lista.filter(p => p.category === filtroCategoria.value);
+  }
+
+  return lista;
+});
+
 function addItem(prod: Product) {
   if (prod) {
     cart.addToCart(prod);
@@ -74,13 +100,31 @@ const formatPrice = (value: number) => {
 // Rodar assim que a página abrir
 onMounted(() => {
   loadProducts();
+
 });
 </script>
 
 <template>
   <q-page padding>
+    <div class="row justify-center q-mb-lg">
+      <div class="col-md-8 col-lg-5">
+        <SearchBar @update-filter="(val: string) => filtroNome = val" />
+      </div>
+    </div>
+    <div class="row justify-center q-mb-xl q-gutter-sm">
+      <div class="text-subtitle1 text-grey-8 q-mb-sm text-weight-medium">
+        Selecione uma categoria:
+      </div>
+      <q-chip v-for="categ in categorias" :key="categ" clickable @click="filtroCategoria = categ"
+        :removable="filtroCategoria === categ" 
+        @remove="filtroCategoria = 'Todos'"
+        :color="filtroCategoria === categ ? 'primary' : 'grey-4'"
+        :text-color="filtroCategoria === categ ? 'white' : 'grey-9'">
+        {{ categ }}
+      </q-chip>
+    </div>
     <div class="row q-col-gutter-md">
-      <div v-for="prod in products" :key="prod.id" class="col-12 col-sm-6 col-md-4">
+      <div v-for="prod in produtosFiltrados" :key="prod.id" class="col-12 col-sm-6 col-md-4">
         <q-card>
           <q-card-section>
             <div class="text-h6">{{ prod.name }}</div>
@@ -88,7 +132,6 @@ onMounted(() => {
           </q-card-section>
 
           <q-card-section>
-            {{ prod.description }}
             <div class="text-secondary text-bold q-mt-md">
               {{ formatPrice(prod.price) }}
             </div>
@@ -107,4 +150,4 @@ onMounted(() => {
       <q-spinner-gears size="50px" color="primary" />
     </q-inner-loading>
   </q-page>
-</template> 
+</template>
