@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useAuthStore } from 'src/stores/auth';
 import { useRouter } from 'vue-router';
 import Carrinho from 'src/components/Carrinho.vue';
@@ -9,18 +9,27 @@ const auth = useAuthStore();
 const router = useRouter();
 const $q = useQuasar();
 
-const carrinhoAberto = ref(false); 
+const carrinhoAberto = ref(false);
 const drawerCarrinho = ref<InstanceType<typeof Carrinho> | null>(null);
+
+onMounted(() => {
+  const savedDarkMode = localStorage.getItem('darkMode');
+  if (savedDarkMode !== null) {
+    $q.dark.set(savedDarkMode === 'true');
+  }
+});
+
+const toggleDarkMode = () => {
+  $q.dark.toggle();
+  localStorage.setItem('darkMode', $q.dark.isActive.toString());
+};
 
 function openCart() {
   if (drawerCarrinho.value) {
     drawerCarrinho.value.toggle();
-    carrinhoAberto.value = !carrinhoAberto.value; 
+    carrinhoAberto.value = !carrinhoAberto.value;
   }
 }
-const toggleDarkMode = () => {
-  $q.dark.toggle();
-};
 
 function handleLogout() {
   auth.logout(); // Limpa token e role
@@ -75,8 +84,8 @@ function handleLogout() {
       </q-toolbar>
     </q-header>
 
-    <Carrinho ref="drawerCarrinho"/>
-    
+    <Carrinho ref="drawerCarrinho" />
+
     <q-page-container>
       <router-view />
     </q-page-container>

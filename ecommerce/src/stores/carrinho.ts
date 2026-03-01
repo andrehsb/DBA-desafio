@@ -6,6 +6,7 @@ interface CarrinhoItem {
     price: number;
     image: string;
     stock: number;
+    category: string;
     quantidade: number;
 }
 
@@ -31,9 +32,9 @@ export const useCarrinhoStore = defineStore('carrinho', {
             } else {
                 Notify.create({
                     type: 'warning',
-                    message: estoque <= 0 
-                ? 'Produto esgotado!' 
-                : `Limite de ${estoque} unidades atingido.`,
+                    message: estoque <= 0
+                        ? 'Produto esgotado!'
+                        : `Limite de ${estoque} unidades atingido.`,
                     position: 'top'
                 });
             }
@@ -53,6 +54,11 @@ export const useCarrinhoStore = defineStore('carrinho', {
 
             localStorage.setItem('carrinho', JSON.stringify(this.items));
         },
+
+        clearItem(productId: number) {
+            this.items = this.items.filter(item => item.id !== productId);
+        },
+        
         clearCart() {
             this.items = [];
             localStorage.removeItem('carrinho');

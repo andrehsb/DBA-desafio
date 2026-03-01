@@ -137,7 +137,7 @@ const categorias = computed(() => {
     <div class="row q-col-gutter-md">
       
       <div v-for="prod in produtosFiltrados" :key="prod.id" class="col-md-4 col-lg-3">
-        <q-card clickable @click="() => $router.push(`/produto/${prod.id}`)" class="cursor-pointer">
+        <q-card clickable @click="() => $router.push(`/produto/${prod.id}`) "class="cursor-pointer">
           
           <q-img :src="imagensPorCategoria[prod.category] || imagensPorCategoria.default" style="height: 120px"></q-img>
           

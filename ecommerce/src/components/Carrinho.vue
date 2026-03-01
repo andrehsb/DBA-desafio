@@ -13,6 +13,14 @@ defineExpose({
     toggle: () => { carrinho.value = !carrinho.value }
 });
 
+const imagensPorCategoria: Record<string, string> = {
+    'Eletrônicos': 'https://images.unsplash.com/photo-1498049794561-7780e7231661?w=500',
+    'Roupas': 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?w=500',
+    'Alimentos': 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=500',
+    'Jogos': 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=500',
+    'default': 'https://images.unsplash.com/photo-1557683316-973673baf926?w=500'
+};
+
 const formatPrice = (value: number) => {
     return new Intl.NumberFormat('pt-BR', {
         style: 'currency',
@@ -31,6 +39,7 @@ function finalizaCompra() {
     $q.dialog({
         title: 'Finalizar Pedido',
         message: `O total da sua compra é ${formatPrice(cart.totalValue)}. Deseja confirmar?`,
+        
         ok: {
             label: 'Confirmar',
             color: 'positive'
@@ -51,6 +60,10 @@ function finalizaCompra() {
         });
     });
 }
+
+function removerTudo(prod: any) {
+    cart.clearItem(prod.id);
+}
 </script>
 
 <template>
@@ -66,9 +79,10 @@ function finalizaCompra() {
                 </q-item-section>
             </q-item>
 
-            <q-item v-for="prod in cart.items" :key="prod.id" class="q-py-md">
+            <q-item v-for="prod in cart.items" :key="prod.id" class="q-py-md cursor-pointer" clickable
+                @click="() => $router.push(`/produto/${prod.id}`)">
                 <q-item-section avatar>
-                    <q-img :src="prod.image" style="width: 50px; height: 50px" />
+                    <q-img :src="imagensPorCategoria[prod.category] || imagensPorCategoria.default" />
                 </q-item-section>
 
                 <q-item-section>
@@ -81,14 +95,16 @@ function finalizaCompra() {
                 <q-item-section side>
                     <div class="row items-center q-gutter-x-xs">
                         <q-btn flat round dense icon="remove" size="sm" color="black"
-                            @click="prod.id && cart.removeFromCart(prod.id)" />
+                            @click.stop="prod.id && cart.removeFromCart(prod.id)" />
 
                         <div class="text-primary text-weight-bold q-px-xs">
                             {{ formatPrice(prod.price * prod.quantidade) }}
                         </div>
 
                         <q-btn flat round dense icon="add" size="sm" color="black"
-                            @click="prod.id && cart.addToCart(prod)" />
+                            @click.stop="prod.id && cart.addToCart(prod)" />
+                        <q-btn flat round dense icon="delete" size="sm" color="negative"
+                            @click.stop="removerTudo(prod)" />
 
                     </div>
                 </q-item-section>
@@ -98,7 +114,7 @@ function finalizaCompra() {
             <q-item class="q-py-md" v-if="cart.items.length > 0">
                 <q-item-section>
                     <q-item-label class="text-h10 text-grey-10 q-mb-md">Total: {{ formatPrice(cart.totalValue)
-                        }}</q-item-label>
+                    }}</q-item-label>
                     <q-btn color="primary" label="Finalizar Compra" icon='check' class="full-width"
                         @click="finalizaCompra" />
                 </q-item-section>

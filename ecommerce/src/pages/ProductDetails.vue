@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { api } from 'boot/axios';
 import { useCarrinhoStore } from 'src/stores/carrinho';
@@ -53,8 +53,16 @@ const loadProduct = async () => {
     } finally {
         loading.value = false;
     }
+    
 };
-
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) {
+      loadProduct();
+    }
+  }
+);
 onMounted(loadProduct);
 
 const formatPrice = (val: number) => {
@@ -73,38 +81,41 @@ const formatPrice = (val: number) => {
             <q-spinner-dots color="primary" size="40px" />
         </div>
 
-        <q-card v-else-if="product">
-            <div class="row q-col-gutter-md">
+        <q-card v-else-if="product" class="q-pa-md">
+            <div v-if="auth.role === 'admin'" class="absolute-top-right q-pa-lg">
+                <q-btn color="secondary" icon="edit" label="Editar Dados" :to="`/editar/${product.id}`" />
+            </div>
 
-                <q-card-actions v-if="auth.role === 'admin'" align="right" class="col-12 q-px-lg q-pt-md q-mt-lg">
-                    <q-btn color="secondary" icon="edit" label="Editar Dados" :to="`/editar/${product.id}`" />
-                </q-card-actions>
+            <div class="row q-col-gutter-xl items-center">
 
-                <div class="col-md-6 flex flex-center q-mb-xs q-mt-xs">
+                <div class="col-12 col-md-6 flex justify-center items-start q-mt-none">
                     <q-img :src="imagensPorCategoria[product.category] || imagensPorCategoria.default"
-                        style="max-height: 400px; border-radius: 8px;" fit="contain" />
+                        style="width: 100%; max-height: 450px; border-radius: 8px;" fit="contain" />
                 </div>
 
-                <q-card-section class="col-12 col-md-6">
-                    <div class="text-h4 text-grey-10">{{ product.name }}</div>
-                    <div class="text-h5 text-grey-10 q-mt-md">
+                <div class="col-md-6">
+                    <div class="text-h3 text-grey-10 text-weight-bold q-mb-sm">{{ product.name }}</div>
+
+                    <div class="text-h4 text-primary q-mb-md">
                         {{ formatPrice(product.price) }}
                     </div>
-                    <p class="q-mt-lg text-body1 text-grey-10"> Estoque:{{ product.stock }}</p>
-                    <q-card-section class="col-12 col-md-6">
-                        <div class="q-mt-lg">
-                            <div class="text-weight-bold text-black q-mb-xs">Descrição:</div>
-                            <div class="text-body2 text-black bg-grey-3 q-pa-sm"
-                                style="border-radius: 8px; word-break: break-word; line-height: 1.4;">
-                                {{ product.description }}
-                            </div>
+
+                    <q-chip icon="inventory_2" outline color="grey-8" class="q-mb-lg">
+                        Estoque disponível: {{ product.stock }}
+                    </q-chip>
+
+                    <div class="bg-grey-3 q-pa-md" style="border-radius: 8px;">
+                        <div class="text-weight-bold text-black q-mb-xs">Descrição:</div>
+                        <div class="text-body1 text-black" style="word-break: break-word; line-height: 1.5;">
+                            {{ product.description }}
                         </div>
-                    </q-card-section>
-                </q-card-section>
-                <q-card-actions align="right" class="col-12 q-px-lg q-pt-md q-mb-lg">
-                    <q-btn color="primary" icon="shopping_cart" label="Adicionar" @click="addItem"
-                        class="col-3 q-px- q-pb-lg q-mt-md" />
-                </q-card-actions>
+                    </div>
+
+                    <div class="row q-mt-xl">
+                        <q-btn color="primary" icon="shopping_cart" label="Adicionar ao Carrinho" @click="addItem"
+                            class="full-width q-py-md text-weight-bold" size="lg" />
+                    </div>
+                </div>
             </div>
         </q-card>
     </q-page>
