@@ -59,21 +59,29 @@ body {
     transition: background-color 0.3s ease;
 }
 
+.q-drawer {
+    background: white !important;
+}
+
 .body--dark {
     .q-page {
         background: #121212 !important;
     }
 
     .q-header {
-        background: #0c0229 !important;
+        background: #0c0229;
     }
 
     .q-card {
-        background: #d4d4db !important;
+        background: #d4d4db;
         border: 1px solid #333;
     }
 
     .q-field--outlined .q-field__control:before {
         border-color: rgb(138, 134, 134) !important;
+    }
+
+    .q-drawer {
+        background: #d4d4db !important;
     }
 }

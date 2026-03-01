@@ -2,23 +2,22 @@
 import { ref } from 'vue';
 import { useAuthStore } from 'src/stores/auth';
 import { useRouter } from 'vue-router';
-import { useCarrinhoStore } from 'src/stores/carrinho';
+import Carrinho from 'src/components/Carrinho.vue';
 import { useQuasar } from 'quasar';
 
-const cart = useCarrinhoStore();
 const auth = useAuthStore();
 const router = useRouter();
-const menu = ref(false);
-const carrinho = ref(false);
 const $q = useQuasar();
 
-const formatPrice = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL'
-  }).format(value);
-};
+const carrinhoAberto = ref(false); 
+const drawerCarrinho = ref<InstanceType<typeof Carrinho> | null>(null);
 
+function openCart() {
+  if (drawerCarrinho.value) {
+    drawerCarrinho.value.toggle();
+    carrinhoAberto.value = !carrinhoAberto.value; 
+  }
+}
 const toggleDarkMode = () => {
   $q.dark.toggle();
 };
@@ -26,44 +25,6 @@ const toggleDarkMode = () => {
 function handleLogout() {
   auth.logout(); // Limpa token e role
   router.push('/login'); // Manda de volta para o login
-}
-
-function openCart() {
-  carrinho.value = !carrinho.value;
-}
-
-
-function finalizaCompra() {
-  if (cart.items.length === 0) {
-    $q.notify({
-      message: 'Seu carrinho está vazio!',
-      color: 'warning',
-      icon: 'warning'
-    });
-    return;
-  }
-  $q.dialog({
-    title: 'Finalizar Pedido',
-    message: `O total da sua compra é ${formatPrice(cart.totalValue)}. Deseja confirmar?`,
-    ok: {
-      label: 'Confirmar',
-      color: 'positive'
-    },
-    cancel: {
-      label: 'cancelar',
-      color: 'negative',
-      flat: true
-    },
-    persistent: true
-  }).onOk(() => {
-    cart.clearCart();
-    $q.notify({
-      type: 'positive',
-      message: 'Sua compra foi finalizada com sucesso!',
-      position: 'center',
-      timeout: 3000
-    });
-  });
 }
 </script>
 
@@ -93,7 +54,7 @@ function finalizaCompra() {
 
         <template v-if="auth.isAuthenticated">
 
-          <q-item clickable @click="openCart" :active="carrinho" active-class="borda-ativa">
+          <q-item clickable @click="openCart" :active="carrinhoAberto" active-class="borda-ativa">
             <q-item-section side>
               <q-icon name="shopping_cart" />
             </q-item-section>
@@ -114,55 +75,8 @@ function finalizaCompra() {
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-if="auth.isAuthenticated" v-model="carrinho" side="right" bordered class="bg-grey-1">
-      <q-list separator>
-        <q-item-label header class="text-h6">
-          Carrinho ({{ cart.totalItems }})
-        </q-item-label>
-
-        <q-item v-if="cart.items.length === 0">
-          <q-item-section class="text-grey text-center q-pa-md">
-            Seu carrinho está vazio.
-          </q-item-section>
-        </q-item>
-
-        <q-item v-for="prod in cart.items" :key="prod.id" class="q-py-md">
-          <q-item-section avatar>
-            <q-img :src="prod.image" style="width: 50px; height: 50px" />
-          </q-item-section>
-
-          <q-item-section>
-            <q-item-label class="text-weight-bold text-black">{{ prod.name }}</q-item-label>
-            <q-item-label caption>
-              Quantidade: {{ prod.quantidade }} x {{ formatPrice(prod.price) }}
-            </q-item-label>
-          </q-item-section>
-
-          <q-item-section side>
-            <div class="row items-center q-gutter-x-xs">
-              <q-btn flat round dense icon="remove" size="sm" color="black"
-                @click="prod.id && cart.removeFromCart(prod.id)" />
-
-              <div class="text-primary text-weight-bold q-px-xs">
-                {{ formatPrice(prod.price * prod.quantidade) }}
-              </div>
-
-              <q-btn flat round dense icon="add" size="sm" color="black" @click="prod.id && cart.addToCart(prod)" />
-
-            </div>
-          </q-item-section>
-
-        </q-item>
-
-        <q-item class="q-py-md" v-if="cart.items.length > 0">
-          <q-item-section>
-            <q-item-label class="text-h10 q-mb-md">Total: {{ formatPrice(cart.totalValue) }}</q-item-label>
-            <q-btn color="primary" label="Finalizar Compra" icon='check' class="full-width" @click="finalizaCompra" />
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </q-drawer>
-
+    <Carrinho ref="drawerCarrinho"/>
+    
     <q-page-container>
       <router-view />
     </q-page-container>

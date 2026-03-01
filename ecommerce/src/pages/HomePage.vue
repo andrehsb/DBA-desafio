@@ -114,38 +114,49 @@ const categorias = computed(() => {
 <template>
   <q-page padding>
     <div class="row justify-center q-mb-lg">
+      
       <div class="col-md-8 col-lg-5">
         <SearchBar @update-filter="(val: string) => filtroNome = val" />
-      </div>
+      
+        </div>
     </div>
     <div class="row justify-center q-mb-xl q-gutter-sm">
+      
       <div class="text-subtitle1 text-primary q-mb-sm text-weight-medium">
         Selecione uma categoria:
       </div>
+      
       <q-chip v-for="categ in categorias" :key="categ" clickable @click="filtroCategoria = categ"
         :removable="filtroCategoria === categ" @remove="filtroCategoria = 'Todos'"
         :color="filtroCategoria === categ ? 'primary' : 'grey-4'"
         :text-color="filtroCategoria === categ ? 'white' : 'grey-9'">
         {{ categ }}
+      
       </q-chip>
     </div>
     <div class="row q-col-gutter-md">
+      
       <div v-for="prod in produtosFiltrados" :key="prod.id" class="col-md-4 col-lg-3">
         <q-card clickable @click="() => $router.push(`/produto/${prod.id}`)" class="cursor-pointer">
+          
           <q-img :src="imagensPorCategoria[prod.category] || imagensPorCategoria.default" style="height: 120px"></q-img>
+          
           <q-card-section class="text-center q-pa-xs">
             <div class="text-h6 text-bold text-grey-10 ellipsis-4-lines flex flex-center"
               style="height: 64px; line-height: 1.2">
               {{ prod.name }}
             </div>
           </q-card-section>
+          
           <q-card-actions class="q-px-md q-gutter-xs q-pt-none" align="between">
-            <q-btn v-if="auth.role === 'admin'" flat color="negative" label="Excluir" @click="deleteProduct(prod.id)"
+            <q-btn v-if="auth.role === 'admin'" flat color="negative" label="Excluir" @click.stop="deleteProduct(prod.id)"
               class="q-px-sm" />
-            <div class="text-secondary text-bold">
+            
+              <div class="text-secondary text-bold">
               {{ formatPrice(prod.price) }}
             </div>
-            <q-btn color="primary" icon="shopping_cart" label="Adicionar" @click="addItem(prod)" class="q-px-sm" />
+            
+            <q-btn color="primary" icon="shopping_cart" label="Adicionar" @click.stop="addItem(prod)" class="q-px-sm" />
           </q-card-actions>
         </q-card>
       </div>

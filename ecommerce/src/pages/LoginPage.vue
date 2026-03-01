@@ -54,14 +54,14 @@ async function handleLogin() {
           <q-input v-model="form.username" label="Usuário" outlined bg-color="white"
             :rules="[val => !!val || 'O usuário é obrigatório']">
             <template v-slot:prepend>
-              <q-icon name="person" />
+              <q-icon name="person" class="text-grey-10" />
             </template>
           </q-input>
 
           <q-input v-model="form.password" label="Senha" type="password" outlined bg-color="white"
             :rules="[val => !!val || 'A senha é obrigatória']">
             <template v-slot:prepend>
-              <q-icon name="lock" />
+              <q-icon name="lock" class="text-grey-10" />
             </template>
           </q-input>
 
