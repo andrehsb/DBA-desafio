@@ -37,9 +37,9 @@ function finalizaCompra() {
         return;
     }
     $q.dialog({
-        title: 'Finalizar Pedido',
-        message: `O total da sua compra é ${formatPrice(cart.totalValue)}. Deseja confirmar?`,
-        
+        title: '<span class="text-black">Finalizar Pedido</span>',
+        message: `<span class="text-black">O total da sua compra é ${formatPrice(cart.totalValue)}. Deseja confirmar?</span>`,
+        html:true,
         ok: {
             label: 'Confirmar',
             color: 'positive'

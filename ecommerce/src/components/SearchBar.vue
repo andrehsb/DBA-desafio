@@ -70,14 +70,14 @@ const limparPesquisa = () => {
             <q-icon name="search" @click="buscaGeral" />
         </template>
 
-        <template v-slot:option="scope">
-            <q-item v-bind="scope.itemProps">
+        <template v-slot:option="scope" >
+            <q-item v-bind="scope.itemProps" class="bg-white">
                 <q-item-section>
                     <q-item-label class="text-black text-bold">{{ scope.opt.name }}</q-item-label>
-                    <q-item-label caption>{{ scope.opt.category }}</q-item-label>
+                    <q-item-label class="text-black " caption>{{ scope.opt.category }}</q-item-label>
                 </q-item-section>
                 <q-item-section side>
-                    <q-item-label caption>R$ {{ scope.opt.price }}</q-item-label>
+                    <q-item-label class="text-black" caption>R$ {{ scope.opt.price }}</q-item-label>
                 </q-item-section>
             </q-item>
         </template>

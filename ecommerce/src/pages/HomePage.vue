@@ -39,8 +39,9 @@ async function loadProducts() {
 
 async function deleteProduct(id: number) {
   $q.dialog({
-    title: 'Confirmar Exclusão',
-    message: 'Tem certeza que deseja excluir este produto?',
+    title: '<span class="text-black"> Confirmar Exclusão </span>',
+    message: '<span class="text-black">Tem certeza que deseja excluir este produto?</span>',
+    html: true,
     ok: {
       label: 'Sim',
       color: 'negative'
